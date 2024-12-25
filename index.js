@@ -24,9 +24,34 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-
-
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+
+app.get(
+  '/api/:date?',
+  function(req,res){
+    const dateParam = req.params.date;
+    let date;
+    if (!dateParam){
+      date = new Date();
+    }
+    else if (!isNaN(dateParam)){
+      date = new Date(Number(dateParam));
+    } else {
+      date = new Date(dateParam);
+    }
+
+    if (isNaN(date.getTime())){
+      return res.json({ error: "Invalid Date" });
+    }
+
+    res.json(
+      {
+        unix: date.getTime(),
+        utc: date.toUTCString()
+      }
+    );
+  }
+);
